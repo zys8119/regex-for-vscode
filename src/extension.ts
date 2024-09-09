@@ -211,6 +211,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		[
 			{ language: 'javascript' },
 			{ language: 'typescript' },
+			{ language: 'vue' },
 		],
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {

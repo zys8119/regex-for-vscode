@@ -11,26 +11,12 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:javascript"
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:vue"
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "languages": [
-      {
-        "id": "javascript",
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx",
-          ".vue"
-        ],
-        "aliases": [
-          "JavaScript",
-          "javascript"
-        ]
-      }
-    ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
