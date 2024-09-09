@@ -172,39 +172,39 @@ export async function activate(context: vscode.ExtensionContext) {
 		},
 		{
 			"label": "用户名",
-			"description": "/^[a-z0-9_-]{3,16}$/"
+			"value": "/^[a-z0-9_-]{3,16}$/"
 		},
 		{
 			"label": "密码",
-			"description": "/^[a-z0-9_-]{6,18}$/"
+			"value": "/^[a-z0-9_-]{6,18}$/"
 		},
 		{
 			"label": "十六进制值",
-			"description": "/^#?([a-f0-9]{6}|[a-f0-9]{3})$/"
+			"value": "/^#?([a-f0-9]{6}|[a-f0-9]{3})$/"
 		},
 		{
 			"label": "电子邮箱",
-			"description": "/^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$/\n/^[a-z\\d]+(\\.[a-z\\d]+)*@([\\da-z](-[\\da-z])?)+(\\.{1,2}[a-z]+)+$/"
+			"value": "/^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$/\n/^[a-z\\d]+(\\.[a-z\\d]+)*@([\\da-z](-[\\da-z])?)+(\\.{1,2}[a-z]+)+$/"
 		},
 		{
 			"label": "URL",
-			"description": "/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/"
+			"value": "/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/"
 		},
 		{
 			"label": "IP 地址",
-			"description": "/((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)/\n/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"
+			"value": "/((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)/\n/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"
 		},
 		{
 			"label": "HTML 标签",
-			"description": "/^<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)$/"
+			"value": "/^<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)$/"
 		},
 		{
 			"label": "删除代码\\\\注释",
-			"description": "(?<!http:|\\S)//.*$"
+			"value": "(?<!http:|\\S)//.*$"
 		},
 		{
 			"label": "Unicode编码中的汉字范围",
-			"description": "/^[\\u2E80-\\u9FFF]+$/"
+			"value": "/^[\\u2E80-\\u9FFF]+$/"
 		}
 	];
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
@@ -217,20 +217,22 @@ export async function activate(context: vscode.ExtensionContext) {
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 				return regsAutoCompletion.map((item:any)=>{
 					const completionItem = new vscode.CompletionItem({
-						label: item.label,
+						label:`\\\\${item.label}`,
 						detail: item.detail,
 						description:  item.description,
 					});
-					completionItem.insertText = item.label;
+					completionItem.insertText = item.value || item.label;
+					const linePrefix = document.lineAt(position).text.substr(0, position.character);
+					const index = linePrefix.lastIndexOf(linePrefix.match(/\\{,}/) as any);
 					completionItem.range = new vscode.Range(
-						new vscode.Position(position.line, position.character - 1),
+						new vscode.Position(position.line, index > -1 ? index-1 : position.character - 2),
 						position // 当前光标位置
 					);
 					return completionItem;
 				});
 			}
 		},
-		...regsAutoCompletion.map(e=>e.label[0])
+		"\\"
 	));
 }
 
